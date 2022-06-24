@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Zen+Kurenaido&display=swap');
+
+.rg_layout{
+    width: 100%;
+    height: 585px;
+    background-size: 100% 780px;
+    overflow: hidden;
+}
+
+body{
+    background-image:url("../images/register_bg.jpeg");
+    background-repeat: repeat;
+    color: cadetblue;
+    font-weight:bold;
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-size: 20px;
+
+}
+
+.rg_form_center{
+    width:400px;
+    height: 280px;
+    position: absolute;
+    left:50%;
+    top:50%;
+    margin-left: -200px;
+    margin-top:-140px;
+    align:center;
+}
+
+input[type="text"]{
+    border-radius: 20px;
+    border: 0;
+}
+
+input[type="date"]{
+    border-radius: 20px;
+    border: 0;
+}
+
+.rg_form_left{
+    width:400px;
+    height: 280px;
+    position: absolute;
+    left:50%;
+    top:50%;
+    margin-left: -200px;
+    margin-top:-200px;
+    align:center;
+}
+
+.rg_form_right{
+    width:400px;
+    height: 280px;
+    position: absolute;
+    left:50%;
+    top:50%;
+    margin-left: -200px;
+    margin-top:350px;
+    align:center;
+}
+
+*{
+    box-sizing: border-box;
+}
+
+.rg_form_center.td_left{
+    width:200px;
+    text-align: right;
+
+
+}
+
+.rg_form_center.td_right{
+    width:200px;
+}
+
+
+
+

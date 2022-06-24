@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン</title>
+    <link rel="stylesheet" href="css/register.css">
+
+<!--    jQueryを導入-->
+    <script src="js/jquery-3.3.1.js"></script>
+
+<!--    formの入力内容についてチェック-->
+    <script type="text/javascript">
+        /*
+        form内容についてチェック
+            1. username: 長さは8-20
+            2. password: 長さは8-20
+            3. email
+            4. name: not null
+            5. 携帯番号
+            6. 生年月日
+            7. 認証コード
+         */
+
+        // imgをクリックすると、認証コードが変わる
+        function changeCheckCode(){
+            var　src = "checkCode?" + new Date().getTime();
+            $('.picture').attr("src",src);
+        }
+
+        // ユーザー名についてチェック、長さは8-20
+        function checkUsername(){
+            // 1. usernameを取得
+            var username = $("#username").val();
+            // 2. 正規表現を定義 　　\w:アルファベット、アンダーバー、数字
+            var reg_username = /^\w{8,20}$/;
+            // 3. 判断
+            var flag = reg_username.test(username);
+            if(flag){
+                // usernameはOK
+                $("#username").css("border","");
+            }else{
+                // usernameを再定義する必要あり
+                $("#username").css("border","1px solid red");
+            }
+
+            // 判断結果を返す
+            return flag;
+        }
+
+
+        // passwordについてチェック、長さは8-20
+        function checkPassword() {
+            //1. passwordを取得
+            var password = $("#password").val();
+            //2. 正規表現を定義
+            var reg_password = /^\w{8,20}$/;
+            //3. 判断
+            var flag = reg_password.test(password);
+            if(flag){
+                // passwordはOK
+                $("#password").css("border","");
+            }else{
+                // passwordを再定義する必要あり
+                $("#password").css("border","1px solid red");
+            }
+
+            // 判断結果を返す
+            return flag;
+        }
+
+
+        // メールアドレスについてチェック
+        function checkEmail(){
+            //1. emailを取得
+            var email = $("#email").val();
+            //2. 正規表現を定義
+            var reg_email = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
+            //3. 判断
+            var flag = reg_email.test(email);
+            if(flag){
+                // emailはOK
+                $("#email").css("border","");
+            }else{
+                // emailを再定義する必要あり
+                $("#email").css("border","1px solid red");
+            }
+            // 判断結果を返す
+            return flag;
+        }
+
+
+        // 氏名についてチェック
+        function checkName(){
+            // 1. 氏名を取得
+            var name = $("#name").val();
+            // 2.判断
+            if(name == null || name == "" || typeof name == "undefined"){
+                // 氏名入力は間違い
+                $("#name").css("border","1px solid red");
+                return false;
+            }else{
+                // 氏名入力はOK
+                $("#name").css("border","");
+                return true;
+            }
+        }
+
+        // 携帯番号についてチェック
+        function checkTelephone(){
+            // 1. 携帯番号を取得
+            var telephone = $("#telephone").val();
+            // 2. 携帯番号の正規表現を定義する
+            var reg_telephone = /^0[789]0[0-9]{4}[0-9]{4}$/;
+            // 3. 判断
+            var flag = reg_telephone.test(telephone);
+            if(flag){
+                // 番号入力は正しい
+                $("#telephone").css("border", "");
+            }else{
+                // 番号入力は間違い
+                $("#telephone").css("border","1px solid red");
+            }
+            // 判断結果を返す
+            return flag;
+        }
+
+
+        // 生年月日についてチェック
+        function checkBirthday(){
+            // 1. 生年月日を取得
+            var birthday = $("#birthday").val();
+            // 2. 判断
+            if(birthday == "" || birthday == null || typeof birthday == "undefined"){
+                // 生年月日の入力が間違い
+                $("#birthday").css("border", "1px solid red");
+                return false;
+            }else{
+                // 生年月日の入力が正しい
+                $("#birthday").css("border", "");
+                return true;
+            }
+        }
+
+
+        // 認証コードについてチェック
+        function checkCheck(){
+            // 1. 認証コードを取得
+            var check = $("#check").val();
+            // 2. 判断
+            if(check!=""){
+                // コードの入力が正しい
+                $("#check").css("border", "");
+                return true;
+            }else{
+                // コードの入力が間違い
+                $("#check").css("border", "1px solid red");
+                return false;
+            }
+        }
+
+
+        $(function(){
+            //  formが提出される時に、定義した方法でチェックする
+            $("#registerForm").submit(function(){
+                // 1. 入力チェック通った場合、データをサーバに送る
+                if (checkUsername() && checkPassword() && checkEmail()
+                    && checkTelephone() && checkName() && checkBirthday() && checkCheck()) {
+                    // Ajaxリクエストを送り、データをkey：valueで保存する
+                    // serialize()で入力データをkey：valueに変換する
+                    $.post("registUserServlet", $(this).serialize(),function(data){
+                        // サーバからのレスポンスをdataに保存　例：  {flag: true , errorMsg: "登録失敗"}
+                        if (data.flag) {
+                            // 登録成功，register_okの画面に遷移
+                            location.href = "register_ok.html";
+                        } else {
+                            // 登録失敗、エラーMSGが出る
+                            $("#errorMsg").html(data.errorMsg);
+                        }
+                    });
+                }
+                // 2.submit時のメソッドチェックする際に、戻り値はない、あるいは戻り値はtrueの場合、formは提出される
+                // 戻り値がfalseの場合、formは提出されない
+                return false;
+
+            });
+
+            // マウスが移動する時に、定義したメソッドでチェックする
+            $("#username").blur(checkUsername);
+            $("#password").blur(checkPassword);
+            $("#email").blur(checkEmail);
+            $("#name").blur(checkName);
+            $("#telephone").blur(checkTelephone);
+            $("#birthday").blur(checkBirthday);
+            $("#check").blur(checkCheck);
+        });
+
+    </script>
+
+</head>
+<body>
+
+<!--ヘッダー部分-->
+<div id="header"></div>
+
+<div class="rg_layout">
+<div class="rg_form_left" style="text-align: center; font-size:30px" >
+    <p>ユーザ新規登録</p>
+</div>
+
+<!--ログインフォーム-->
+<div class="rg_form_center">
+    <div id="errorMsg" style="color: red; text-align:center"></div>
+    <form id="registerForm" action="user">
+<!--        処理を提出する時-->
+        <input type="hidden" name="action" value="register">
+        <table style="margin-top: 25px; line-height: 40px">
+            <tr>
+                <td class="td_left">
+                    <label for="username">ユーザー名</label>
+                </td>
+                <td class="td_right">
+                    <input type="text" id="username" name="username" placeholder="ユーザー名を入力してください" style="width: 220px;height: 25px">
+                </td>
+            </tr>
+
+            <tr>
+                <td class="td_left">
+                    <label for="password">パスワード</label>
+                </td>
+                <td class="td_right">
+                    <input type="text" id="password" name="password" placeholder="パスワードを入力してください" style="width: 220px;height: 25px">
+                </td>
+            </tr>
+
+            <tr>
+                <td class="td_left">
+                    <label for="email">メール</label>
+                </td>
+                <td class="td_right">
+                    <input type="text" id="email" name="email" placeholder="メールアドレスを入力してください" style="width: 220px;height: 25px">
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="td_left">
+                    <label for="name">氏名</label>
+                </td>
+                <td class="td_right">
+                    <input type="text" id="name" name="name" placeholder="氏名を入力してください" style="width: 220px;height: 25px">
+                </td>
+            </tr>
+            　
+
+
+            <tr>
+                <td class="td_left">
+                    <label for="telephone">携帯番号</label>
+                </td>
+                <td class="td_right">
+                    <input type="text" id="telephone" name="telephone" placeholder="携帯番号を入力してください" style="width: 220px;height: 25px">
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="td_left">
+                    <label for="sex">性別</label>
+                </td>
+                <td class="td_right">
+                    <input type="radio" id="sex" name="sex" value="男" checked> 男
+                    <input type="radio" name="sex" value="女">女
+                </td>
+            </tr>
+
+            <tr>
+                <td class="td_left">
+                    <label for="birthday">生年月日</label>
+                </td>
+                <td class="td_right">
+                    <input type="date" id="birthday" name="birthday" placeholder="生年月日を入力してください" style="width: 220px;height: 25px">
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="td_left">
+                    <label for="check">認証コード</label>
+                </td>
+                <td class="td_right">
+                    <input type="text" id="check" name="check" class="check" style="height: 25px">
+                    <img src="checkCode" id="img" height="32px" alt="コード" 　onclick="changeCheckCode(this)">
+                    <script type="text/javascript">
+                        // imgをクリックすると、認証コードが変わる
+                        function changeCheckCode(img){
+                             img.src = "checkCode?" + new Date().getTime();
+                        }
+                    </script>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+
+                </td>
+                <td>
+                    <input type="submit" class="submit" value="登録">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div class="rg_form_right">
+    <p>
+        登録済み？
+        <a href="#">ログイン</a>
+    </p>
+</div>
+
+</div>
+
+</script>
+
+</body>
+</html>
+
+

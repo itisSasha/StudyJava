@@ -1,0 +1,9 @@
+domain/User.class
+service/UserServiceImpl.class
+dao/UserDaoImpl.class
+web/servlet/RegistUserServlet.class
+service/UserService.class
+domain/ResultInfo.class
+dao/UserDao.class
+web/servlet/CheckCodeServlet.class
+Util/JDBCUtils.class
